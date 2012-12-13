@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="H:/documents/programmation/eclipse espace de travail/constellationChat_v1/lib/hazelcast-2.4.jar"/>
+	<classpathentry kind="lib" path="H:/documents/programmation/eclipse espace de travail/constellationChat_v1/lib/hazelcast-all-2.4.jar"/>
+	<classpathentry kind="lib" path="H:/documents/programmation/eclipse espace de travail/constellationChat_v1/lib/hazelcast-client-2.4.jar"/>
+	<classpathentry kind="lib" path="H:/documents/programmation/eclipse espace de travail/constellationChat_v1/lib/hazelcast-cloud-2.4.jar"/>
+	<classpathentry kind="lib" path="H:/documents/programmation/eclipse espace de travail/constellationChat_v1/lib/hazelcast-hibernate-2.4.jar"/>
+	<classpathentry kind="lib" path="H:/documents/programmation/eclipse espace de travail/constellationChat_v1/lib/hazelcast-spring-2.4.jar"/>
+	<classpathentry kind="lib" path="H:/documents/programmation/eclipse espace de travail/constellationChat_v1/lib/hazelcast-wm-2.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
