@@ -1,5 +1,5 @@
-            PROJET CONSTELLATION
-______________________________________________
+                 PROJET CONSTELLATION
+
 
 Dêpot du projet de première année à l'ENSISA.
 
@@ -7,10 +7,14 @@ Le but de ce projet est de créer une constellation de serveur communicant entre
 
 
 Groupe de projet :
-    * Wailander (Robin D), 
-    * Zoski (Gaël A), 
-    * BOUTAINA (Boutaïna S), 
-    * Tristan46 (Tristan G), 
+    * Wailander (Robin D)
+    
+    * Zoski (Gaël A)
+    
+    * BOUTAINA (Boutaïna S)
+    
+    * Tristan46 (Tristan G)
+    
     * WSandrine93 (Sandrine W)
 
 Plus sur : http://constellation.me
