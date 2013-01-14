@@ -7,6 +7,7 @@ Le but de ce projet est de créer une constellation de serveur communicant entre
 
 
 Groupe de projet :
+
     * Wailander (Robin D)
     
     * Zoski (Gaël A)
