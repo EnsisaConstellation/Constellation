@@ -3,7 +3,7 @@
 
 Dêpot du projet de première année à l'ENSISA.
 
-Le but de ce projet est de créer une constellation de serveur communicant entre eux.
+Le but de ce projet est de créer une constellation de serveurs communiquant entre eux.
 
 
 Groupe de projet :
@@ -12,7 +12,7 @@ Groupe de projet :
     
     * Zoski (Gaël A)
     
-    * BOUTAINA (Boutaïna S)
+    * BOUTAINA (Boutaïna C)
     
     * Tristan46 (Tristan G)
     
