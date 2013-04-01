@@ -1,8 +1,0 @@
-Bon, je ne sais pas exactement comment ca se passe quand on telecharge un projet, donc a vous de completer les etapes exactes.
-Pour obtenir un programme qui marche (sous eclipse), vous allez normalement avoir besoin de :
-	- creer un projet sous le nom que vous voulez, sans classes
-	- copier les fichiers telecharges dans le dossier du projet cree
-	- clic droit sur le projet dans eclipse / build path / configure build path... dans librairies, cliquez sur add external JARs... et allez dans le dossier "lib" du projet, et selectionnez tout.
-	- compilez comme en TD
-
-faites moi signe si ca marche, ou des eventuelles erreurs. Le prof semblait avoir parle en td d'une maniere plus efficace, mais ne la connaissant pas...
