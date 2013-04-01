@@ -2,55 +2,71 @@ package server;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+import Commandes.AddContact;
+import Commandes.DelContact;
+import Commandes.CreateRoom;
+import Commandes.Command;
+import Commandes.DelRoom;
+
 
 public class Interpret {
-	BlockingQueue<String> commandes;
-	String cmdAct;
-	String[] tabCmd;
-	StringBuffer msgResult = new StringBuffer() ; // message recomposé
+	//la liste des commandes a executer
+	private BlockingQueue<Command> commands;
+	private Command cmdAct;
 	
-	public Interpret(BlockingQueue<String> commandes){
-		this.commandes = commandes;
-		tabCmd = new String[200];
+	public Interpret(BlockingQueue<Command> commands){
+		this.commands = commands;
 	} 
 	
-	public void execute(Map<String, User> users, Map<String, Saloon> saloons) throws InterruptedException{
-		if(!commandes.isEmpty()){
-			cmdAct = commandes.poll();
-			tabCmd = cmdAct.split(",");
-		// cmd = user,password,CaseFoncion,params ;
+	public void fetch(Map<String, User> users, Map<String, Room> rooms){
+		//on recupere une commande de la queue
+		if(!commands.isEmpty()){
+			cmdAct = commands.poll();
+			execute(users, rooms);
+		}
+	}
+	
+	public void execute(Map<String, User> users, Map<String, Room> rooms){
+		
+		
+		//on test l'identite de la personne ayant lance la commande
+		if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).token.equals(cmdAct.token)){
 			
-			if(tabCmd.length<3)
-				System.out.println(new Exception("commande recue trop courte"));
-			else if(!users.containsKey(tabCmd[0]) || !users.get(tabCmd[0]).password.equals(tabCmd[1]))
-				System.out.println(new Exception("utilisateur ou mot de passe incorrecte"+users.get(tabCmd[0]).password+tabCmd[1]));
-			else
+			//on l'execute
+			if(cmdAct.name.equals("AddContact"))
+				users.get(cmdAct.user).addContact(((AddContact)cmdAct).contact, users);
+			
+			else if(cmdAct.name.equals("DelContact"))
+				users.get(cmdAct.user).delContact(((DelContact)cmdAct).contact);
+			
+			else if(cmdAct.name.equals("CreateRoom"))
+				rooms.put(((CreateRoom)cmdAct).name, new Room(((CreateRoom)cmdAct).name, ((CreateRoom)cmdAct).password, ((CreateRoom)cmdAct).user));
+			
+			else if(cmdAct.name.equals("DelRoom")){
+				if(rooms.containsKey(((DelRoom)cmdAct).room)){
+					if(rooms.get(((DelRoom)cmdAct).room).getOwner().equals(((DelRoom)cmdAct).user)){
+						rooms.get(((DelRoom)cmdAct).room).remove(users);
+						rooms.remove(((DelRoom)cmdAct).room);
+						System.out.println("le salon " + ((DelRoom)cmdAct).room + " a ete supprime");}
+						else
+							System.out.println("le salon " + ((DelRoom)cmdAct).room + " ne peut etre supprime : vous n'en etes pas le createur");
+					}
+				else
+					System.out.println("le salon " + ((DelRoom)cmdAct).room + " ne peut etre supprime : il n'existe pas");
+			}
+			
+		}
+		else
+			System.out.println("probleme d'authentification : " + cmdAct.user + "n'existe pas ou n'est plus authentifie");
+	}
+	
+	
+	
+	/*ancien code de la fonction execute
+	public void execute(Map<String, User> users, Map<String, Room> saloons) throws InterruptedException{
+		
 				switch(tabCmd[2]){
 				
-				case "addContact": // nom du contact
-					if(tabCmd.length == 4)
-						users.get(tabCmd[0]).addContact(tabCmd[3], users);
-					else
-						System.out.println(new Exception("commande addUser incorrecte"));
-					break;	//on sort du case
-					
-				case "delContact": // nom du contact
-					if(tabCmd.length == 4)
-							users.get(tabCmd[0]).delContact(tabCmd[3]);
-					else
-						System.out.println(new Exception("commande addUser incorrecte"));
-					break;
-					
-				case "newSaloon": // nom du saloon, pwd du saloon
-					if(tabCmd.length == 5){
-						System.out.println("tentative de création du saloon "+ tabCmd[3]);
-						if(!saloons.containsKey(tabCmd[3])){
-							saloons.put(tabCmd[3], new Saloon(tabCmd[3],tabCmd[4], users.get(tabCmd[0])));	
-							System.out.println("création du saloon "+ tabCmd[3]);}
-					}
-					else
-						System.out.println(new Exception("commande newSaloon incorrecte"));
-					break;
 			
 				case "joinSaloon": // nom du saloon, pwd du saloon
 					if(tabCmd.length == 5)
@@ -120,6 +136,6 @@ public class Interpret {
 				
 				
 		}
-	}
+	}*/
 }
  
