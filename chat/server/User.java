@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+import Commandes.Command;
+
 import com.hazelcast.core.Hazelcast;
 
 
 public class User implements Serializable {
 
+	//le token vas remplacer le mot de passe une fois la connexion etablie
 	String name, password, token;
 	
 	//date de la dernière connexion, permet de charger les nouveaux messages
@@ -20,10 +23,17 @@ public class User implements Serializable {
 	List<String> contacts = new ArrayList<String>();
 	List<String> roomsUsed = new ArrayList<String>();
 	
+	//la queue aEnvoyer contient tous les messages que l'on veut transmettre à l'utilisateur
+	BlockingQueue<String> aEnvoyer;
 	
 	public User(String name, String password){
 		this.name = name;
 		this.password = password;
+		generateToken();
+		aEnvoyer = Hazelcast.getQueue("aEnvoyer:"+name);
+		
+		//test montrant l'eereur obtenue avec la queue aEnvoyer
+		aEnvoyer.add("             test");
 	}
 	
 	public void addContact(String contact, Map<String, User> users){
@@ -43,5 +53,11 @@ public class User implements Serializable {
 		}
 		else
 			System.out.println("ce contact n'existe pas : "+ contact + " pour l'utilisateur " + name);
+	}
+
+	public void generateToken() {
+		token = ""+10000*Math.random();
+		//TODO améliorer ce systeme
+		
 	}
 }

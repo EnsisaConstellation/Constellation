@@ -38,7 +38,10 @@ public class Server {
 		//boucle de fonctionnement
 		while(true){
 			interpret.fetch(users, rooms);
-			//System.out.println("commandes en attentes : " + commands.size());
+
+			//test de la queue aEnvoyer
+			if(!users.get("user1").aEnvoyer.isEmpty())
+				System.out.println(users.get("user1").aEnvoyer.poll());
 		}
 	}
 

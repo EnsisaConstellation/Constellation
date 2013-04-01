@@ -18,19 +18,25 @@ public class Interpret {
 		this.commands = commands;
 	} 
 	
-	public void fetch(Map<String, User> users, Map<String, Room> rooms){
+	public void fetch(Map<String, User> users, Map<String, Room> rooms) throws InterruptedException{
 		//on recupere une commande de la queue
 		if(!commands.isEmpty()){
 			cmdAct = commands.poll();
 			execute(users, rooms);
 		}
+		else
+			Thread.sleep(1);
 	}
 	
 	public void execute(Map<String, User> users, Map<String, Room> rooms){
 		
 		
 		//on test l'identite de la personne ayant lance la commande
-		if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).token.equals(cmdAct.token)){
+		if(cmdAct.name.equals("Connexion")){
+			if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).password.equals(cmdAct.token))
+				users.get(cmdAct.user).generateToken();
+		}
+		else if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).token.equals(cmdAct.token)){
 			
 			//on l'execute
 			if(cmdAct.name.equals("AddContact"))
@@ -54,7 +60,7 @@ public class Interpret {
 				else
 					System.out.println("le salon " + ((DelRoom)cmdAct).room + " ne peut etre supprime : il n'existe pas");
 			}
-			
+			//TODO completer les fonctions manquates
 		}
 		else
 			System.out.println("probleme d'authentification : " + cmdAct.user + "n'existe pas ou n'est plus authentifie");
