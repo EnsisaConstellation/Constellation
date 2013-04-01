@@ -1,1 +1,0 @@
-java -server -cp ../lib/hazelcast-2.4.jar com.hazelcast.examples.TestApp
