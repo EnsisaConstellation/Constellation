@@ -24,13 +24,20 @@ public class User implements Serializable {
 	List<String> roomsUsed = new ArrayList<String>();
 	
 	//la queue aEnvoyer contient tous les messages que l'on veut transmettre à l'utilisateur
-	BlockingQueue<String> aEnvoyer;
+	transient BlockingQueue<String> aEnvoyer;
 	
 	public User(String name, String password){
 		this.name = name;
 		this.password = password;
 		generateToken();
-		aEnvoyer = Hazelcast.getQueue("aEnvoyer:"+name);
+
+		if (aEnvoyer == null) {
+            synchronized(this) { // Exclusion mutuelle, seulement dans le cas où on se doute que aEnvoyer ne l'est pas
+                if (aEnvoyer == null) { // Revérification quand on est sûr que un seul processus est actif à cet endroit là (un autre a peutêtre déjà fait le boulot)
+                    aEnvoyer = Hazelcast.getQueue("aEnvoyer:"+name); // La véritable initialisation
+                }
+            }
+        }
 		
 		//test montrant l'eereur obtenue avec la queue aEnvoyer
 		aEnvoyer.add("             test");
