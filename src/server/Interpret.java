@@ -1,8 +1,13 @@
 package server;
+import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 
+import client.ClientI;
+
 import Commandes.AddContact;
+import Commandes.Connexion;
 import Commandes.DelContact;
 import Commandes.CreateRoom;
 import Commandes.Command;
@@ -13,12 +18,16 @@ public class Interpret {
 	//la liste des commandes a executer
 	private BlockingQueue<Command> commands;
 	private Command cmdAct;
+
+	//map des utilisateurs actuellement en ligne
+	static Map<String, ClientI> usersOnline = new TreeMap<String, ClientI>();
+	
 	
 	public Interpret(BlockingQueue<Command> commands){
 		this.commands = commands;
 	} 
 	
-	public void fetch(Map<String, User> users, Map<String, Room> rooms) throws InterruptedException{
+	public void fetch(Map<String, User> users, Map<String, Room> rooms) throws InterruptedException, RemoteException{
 		//on recupere une commande de la queue
 		if(!commands.isEmpty()){
 			cmdAct = commands.poll();
@@ -28,13 +37,16 @@ public class Interpret {
 			Thread.sleep(1);
 	}
 	
-	public void execute(Map<String, User> users, Map<String, Room> rooms){
+	public void execute(Map<String, User> users, Map<String, Room> rooms) throws RemoteException{
 		
 		
 		//on test l'identite de la personne ayant lance la commande
 		if(cmdAct.name.equals("Connexion")){
-			if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).password.equals(cmdAct.token))
-				users.get(cmdAct.user).generateToken();
+			if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).password.equals(cmdAct.token)){
+				usersOnline.put(cmdAct.user, ((Connexion)cmdAct).client);						//l'utilisateur est enregistré
+				users.get(cmdAct.user).generateToken();											//on lui genere un token
+				((Connexion)cmdAct).client.receive(new Message(users.get(cmdAct.user).token, "Connexion"));	//on lui envoie le token
+			}
 		}
 		else if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).token.equals(cmdAct.token)){
 			
@@ -60,7 +72,7 @@ public class Interpret {
 				else
 					System.out.println("le salon " + ((DelRoom)cmdAct).room + " ne peut etre supprime : il n'existe pas");
 			}
-			//TODO completer les fonctions manquates
+			//TODO completer les fonctions manquantes
 		}
 		else
 			System.out.println("probleme d'authentification : " + cmdAct.user + "n'existe pas ou n'est plus authentifie");
