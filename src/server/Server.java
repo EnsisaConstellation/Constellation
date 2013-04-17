@@ -1,34 +1,39 @@
 package server;
-import java.rmi.RMISecurityManager;
+
+//import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import Commandes.AddContact;
-import Commandes.Command;
-import Commandes.CreateRoom;
-import Commandes.DelContact;
-import Commandes.DelRoom;
 
 import client.ClientI;
 
 import com.hazelcast.core.Hazelcast;
-import java.util.Map;
+import commands.AddContact;
+import commands.Command;
+import commands.CreateRoom;
+import commands.DelContact;
+import commands.DelRoom;
+//import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+@SuppressWarnings("serial")
 public class Server extends UnicastRemoteObject implements ServerI {
 	
 
 	//map des users et des rooms, les noms etant uniques servent de cle
+	@SuppressWarnings("deprecation")
 	static Map<String, Room> rooms = Hazelcast.getMap("rooms");
+	@SuppressWarnings("deprecation")
 	static Map<String, User> users = Hazelcast.getMap("users");
 	
 	//liste des commandes que le serveur doit encore executer
+	@SuppressWarnings("deprecation")
 	static BlockingQueue<Command> commands = Hazelcast.getQueue("commands");
 
 	//map des utilisateurs actuellement en ligne
@@ -60,7 +65,7 @@ public class Server extends UnicastRemoteObject implements ServerI {
 		//on cree l'utilisateur principal, on le connecte et cree les rooms utilent au serveur
 		newUser(new User("root", "root"));
 		users.get("root").generateToken();
-		commands.add(new CreateRoom("root", users.get("root").token, "Connexion", "root"));//Réserve le salon Connexion
+		commands.add(new CreateRoom("root", users.get("root").token, "Connexion", "root"));//Rï¿½serve le salon Connexion
 				
 		//creation d'utilisateurs pour pouvoir tester le fonctionnement du serveur
 		newUser(new User("user1", "password1"));

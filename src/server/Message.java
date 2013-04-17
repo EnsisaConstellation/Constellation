@@ -3,6 +3,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 
 
+@SuppressWarnings("serial")
 public class Message implements Serializable{
 
 	private String content;

@@ -1,5 +1,6 @@
-package Commandes;
+package commands;
 
+@SuppressWarnings("serial")
 public class AddContact extends Command{
 	public String contact;
 	

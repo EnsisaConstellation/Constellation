@@ -1,7 +1,8 @@
-package Commandes;
+package commands;
 
 import client.ClientI;
 
+@SuppressWarnings("serial")
 public class Connexion extends Command{
 	public ClientI client;
 	

@@ -1,5 +1,6 @@
-package Commandes;
+package commands;
 
+@SuppressWarnings("serial")
 public class CreateRoom extends Command{
 	public String name, password;
 	

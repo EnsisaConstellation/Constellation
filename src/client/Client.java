@@ -5,10 +5,12 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import commands.Connexion;
+
 import server.Message;
 import server.ServerI;
-import Commandes.Connexion;
 
+@SuppressWarnings("serial")
 public class Client extends UnicastRemoteObject implements ClientI{
 	static Registry registry;
 	String token;
@@ -37,7 +39,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 	}
 
 	@Override
-	public void receive(Message msg) throws RemoteException { //cette fonction est appelée a distance par le serveur
+	public void receive(Message msg) throws RemoteException { //cette fonction est appelï¿½e a distance par le serveur
 		
 		if(msg.getSaloon().equals("Connexion")){		//le message contient le token
 			token = msg.getContent();
@@ -49,7 +51,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 		}
 	}
 	
-	//TODO implémenter les fonctions correspondant aux diverses commandes possibles
+	//TODO implï¿½menter les fonctions correspondant aux diverses commandes possibles
 	
 	
 }

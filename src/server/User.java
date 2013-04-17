@@ -6,24 +6,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import Commandes.Command;
 
 import com.hazelcast.core.Hazelcast;
+//import commands.Command;
 
 
+@SuppressWarnings("serial")
 public class User implements Serializable {
 
 	//le token vas remplacer le mot de passe une fois la connexion etablie
 	String name, password, token;
 	
-	//date de la dernière connexion, permet de charger les nouveaux messages
+	//date de la derniï¿½re connexion, permet de charger les nouveaux messages
 	DateFormat lastConnection = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
 	
 	//liste des contacts de l'utilisateur et des rooms qu'il utilise
 	List<String> contacts = new ArrayList<String>();
 	List<String> roomsUsed = new ArrayList<String>();
 	
-	//la queue aEnvoyer contient tous les messages que l'on veut transmettre à l'utilisateur
+	//la queue aEnvoyer contient tous les messages que l'on veut transmettre ï¿½ l'utilisateur
 	private transient BlockingQueue<String> aEnvoyer;
 	
 	public User(String name, String password){
@@ -33,6 +34,7 @@ public class User implements Serializable {
 
 	}
 	
+	@SuppressWarnings("deprecation")
 	public BlockingQueue<String> getaEnvoyer() {
 		if (aEnvoyer == null)
 			aEnvoyer = Hazelcast.getQueue("aEnvoyer:"+name);
@@ -62,7 +64,7 @@ public class User implements Serializable {
 
 	public void generateToken() {
 		token = ""+10000*Math.random();
-		//TODO améliorer ce systeme
+		//TODO amÃ©liorer ce systeme
 		
 	}
 }

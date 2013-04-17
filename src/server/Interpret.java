@@ -1,17 +1,18 @@
 package server;
 import java.rmi.RemoteException;
 import java.util.Map;
-import java.util.TreeMap;
+//import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 
-import client.ClientI;
+import commands.AddContact;
+import commands.Command;
+import commands.Connexion;
+import commands.CreateRoom;
+import commands.DelContact;
+import commands.DelRoom;
 
-import Commandes.AddContact;
-import Commandes.Connexion;
-import Commandes.DelContact;
-import Commandes.CreateRoom;
-import Commandes.Command;
-import Commandes.DelRoom;
+//import client.ClientI;
+
 
 
 public class Interpret {
@@ -43,7 +44,7 @@ public class Interpret {
 			if(!users.containsKey(cmdAct.user))//si c'est un nouvel utilisateur, on lui cree un compte
 				Server.newUser(new User(cmdAct.user, cmdAct.token));
 			if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).password.equals(cmdAct.token)){
-				Server.usersOnline.put(cmdAct.user, ((Connexion)cmdAct).client);						//l'utilisateur est enregistré
+				Server.usersOnline.put(cmdAct.user, ((Connexion)cmdAct).client);						//l'utilisateur est enregistrï¿½
 				users.get(cmdAct.user).generateToken();											//on lui genere un token
 				((Connexion)cmdAct).client.receive(new Message(users.get(cmdAct.user).token, "Connexion"));	//on lui envoie le token
 				System.out.println(cmdAct.user+ " s'est connecte au serveur");
@@ -102,14 +103,14 @@ public class Interpret {
 					if(tabCmd.length==6)									//la longueur de la cmd est bonne ?
 						if(saloons.containsKey(tabCmd[3]) 					//le saloons existe bien ?
 						&& !saloons.containsKey(tabCmd[5]) 					//le nom n'est pas pris ?
-						&& saloons.get(tabCmd[2]).owner.equals(tabCmd[0]))	//si l'utilisateur possède bien le saloon
+						&& saloons.get(tabCmd[2]).owner.equals(tabCmd[0]))	//si l'utilisateur possï¿½de bien le saloon
 						{	
 							saloons.get(tabCmd[2]).setName(tabCmd[5]);		//Changement du nom du sallon
-							saloons.put(tabCmd[5], saloons.get(tabCmd[2])); //Création d'une copie
+							saloons.put(tabCmd[5], saloons.get(tabCmd[2])); //Crï¿½ation d'une copie
 							saloons.remove(tabCmd[2]);						//Supression de l'ancien saloon
 							for (int i = 0 ; i< saloons.get(tabCmd[5]).participants.size() ; i++)
 							{
-								users.get(saloons.get(tabCmd[5]).participants.get(i)).saloonsUsed.remove(tabCmd[3]);	//supprime l'ancienne clé
+								users.get(saloons.get(tabCmd[5]).participants.get(i)).saloonsUsed.remove(tabCmd[3]);	//supprime l'ancienne clï¿½
 								users.get(saloons.get(tabCmd[5]).participants.get(i)).saloonsUsed.add(tabCmd[5]);	//ajout du nouveau nom du saloon
 							}
 						}
@@ -121,7 +122,7 @@ public class Interpret {
 					if(tabCmd.length==6)
 						if(saloons.containsKey(tabCmd[3]) 	//saloon existe ?
 								&& saloons.get(tabCmd[2]).owner.equals(tabCmd[0])) //owner ?
-							//TODO vérification du mdp avant la modification
+							//TODO vï¿½rification du mdp avant la modification
 						{
 							saloons.get(tabCmd[2]).setPassword(tabCmd[5]);	//changelent du mdp
 						}

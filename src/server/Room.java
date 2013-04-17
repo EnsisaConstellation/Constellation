@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 
+@SuppressWarnings("serial")
 public class Room implements Serializable {
 
 	private String name, password;
@@ -28,7 +29,7 @@ public class Room implements Serializable {
 		this.password = "";
 		this.bornDate = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
 		participants.add(user);
-		System.out.println("création du salon " + name + " par l'utilisateur " + user);
+		System.out.println("crï¿½ation du salon " + name + " par l'utilisateur " + user);
 	}
 	public Room(String name, String password, String user){
 		this(name, user);
@@ -38,7 +39,7 @@ public class Room implements Serializable {
 	
 	//Methodes
 	public void receive(Message message, Map<String, User> users) throws InterruptedException{//le saloon recoit une message d'un utilisateur
-		//il le met dans la liste des messages et l'envoie à chaque utilisateur inscrit (via send)
+		//il le met dans la liste des messages et l'envoie ï¿½ chaque utilisateur inscrit (via send)
 		messages.add(message);
 		System.out.println(message.getContent());
 		for(int i=0; i<participants.size(); i++)
@@ -50,7 +51,7 @@ public class Room implements Serializable {
 			this.sendMsg(user, i, users);
 	}
 
-	public void sendMsg(String user, int index, Map<String, User> users) throws InterruptedException{//ajoute un message à un utilisateur
+	public void sendMsg(String user, int index, Map<String, User> users) throws InterruptedException{//ajoute un message ï¿½ un utilisateur
 		//if(!messages.isEmpty())
 			//users.get(user).aEnvoyer.offer(messages.get(0));
 	}
@@ -99,7 +100,5 @@ public class Room implements Serializable {
 	public String getPassword() {
 		return password;
 	}
-	
-	
 	
 }
