@@ -19,8 +19,6 @@ public class Interpret {
 	private BlockingQueue<Command> commands;
 	private Command cmdAct;
 
-	//map des utilisateurs actuellement en ligne
-	static Map<String, ClientI> usersOnline = new TreeMap<String, ClientI>();
 	
 	
 	public Interpret(BlockingQueue<Command> commands){
@@ -41,13 +39,16 @@ public class Interpret {
 		
 		
 		//on test l'identite de la personne ayant lance la commande
-		if(cmdAct.name.equals("Connexion")){
+		if(cmdAct.name.equals("Connexion"))
+			if(!users.containsKey(cmdAct.user))//si c'est un nouvel utilisateur, on lui cree un compte
+				Server.newUser(new User(cmdAct.user, cmdAct.token));
 			if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).password.equals(cmdAct.token)){
-				usersOnline.put(cmdAct.user, ((Connexion)cmdAct).client);						//l'utilisateur est enregistré
+				Server.usersOnline.put(cmdAct.user, ((Connexion)cmdAct).client);						//l'utilisateur est enregistré
 				users.get(cmdAct.user).generateToken();											//on lui genere un token
 				((Connexion)cmdAct).client.receive(new Message(users.get(cmdAct.user).token, "Connexion"));	//on lui envoie le token
-			}
-		}
+				System.out.println(cmdAct.user+ " s'est connecte au serveur");
+				}
+			
 		else if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).token.equals(cmdAct.token)){
 			
 			//on l'execute
@@ -75,7 +76,7 @@ public class Interpret {
 			//TODO completer les fonctions manquantes
 		}
 		else
-			System.out.println("probleme d'authentification : " + cmdAct.user + "n'existe pas ou n'est plus authentifie");
+			System.out.println("probleme d'authentification : " + cmdAct.user + " n'existe pas ou n'est plus authentifie " + cmdAct.name);
 	}
 	
 	

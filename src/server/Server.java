@@ -1,4 +1,5 @@
 package server;
+import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -6,12 +7,15 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import Commandes.AddContact;
 import Commandes.Command;
 import Commandes.CreateRoom;
 import Commandes.DelContact;
 import Commandes.DelRoom;
+
+import client.ClientI;
 
 import com.hazelcast.core.Hazelcast;
 import java.util.Map;
@@ -26,6 +30,9 @@ public class Server extends UnicastRemoteObject implements ServerI {
 	
 	//liste des commandes que le serveur doit encore executer
 	static BlockingQueue<Command> commands = Hazelcast.getQueue("commands");
+
+	//map des utilisateurs actuellement en ligne
+	static Map<String, ClientI> usersOnline = new TreeMap<String, ClientI>();
 	
 	static Interpret interpret = new Interpret(commands);
 
@@ -40,6 +47,14 @@ public class Server extends UnicastRemoteObject implements ServerI {
 		Registry RMI_REGISTRY = LocateRegistry.createRegistry(1099);
 		Server server = new Server();
 		//System.setSecurityManager(new SecurityManagerPermissif());
+		/*try {
+		    if (System.getSecurityManager() == null) {
+		      System.setSecurityManager(new RMISecurityManager());
+		    }
+		  } catch (Exception e) {
+		     e.printStackTrace();
+		  }*/
+		
 		RMI_REGISTRY.rebind("server", server);
 		
 		//on cree l'utilisateur principal, on le connecte et cree les rooms utilent au serveur
