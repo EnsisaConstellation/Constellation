@@ -61,10 +61,10 @@ public class Client extends UnicastRemoteObject implements ClientI{
 	@Override
 	public void receive(Message msg) throws RemoteException { //cette fonction est appelée a distance par le serveur
 		
-		if(msg.getSaloon().equals("Connexion")){		//le message contient le token
+		if(msg.getRoom().equals("Connexion")){		//le message contient le token
 			token = msg.getContent();
 			System.out.println(msg.getContent());}//juste pour tester le retour du token
-		else if(msg.getSaloon().equals("ErreurConnexion"))	//mauvais mot de passe
+		else if(msg.getRoom().equals("ErreurConnexion"))	//mauvais mot de passe
 			System.out.println(msg.getContent());
 		else {								//c'est un message normal
 			System.out.println(msg.getContent());

@@ -1,5 +1,6 @@
 package server;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,28 +38,33 @@ public class Room implements Serializable {
 	
 	
 	//Methodes
-	public void receive(Message message, Map<String, User> users) throws InterruptedException{//le saloon recoit une message d'un utilisateur
+	public void receive(Message message) throws InterruptedException{//le saloon recoit une message d'un utilisateur
 		//il le met dans la liste des messages et l'envoie à chaque utilisateur inscrit (via send)
 		messages.add(message);
 		System.out.println(message.getContent());
 		for(int i=0; i<participants.size(); i++)
-			sendMsg(participants.get(i), messages.size()-1, users);
+			sendMsg(participants.get(i), messages.size()-1);
 	}
 	
-	public void send(String user, int nb, Map<String, User> users) throws InterruptedException{
+	public void send(String user, int nb) throws InterruptedException{
 		for(int i=messages.size()-nb; i<messages.size();i++)
-			this.sendMsg(user, i, users);
+			this.sendMsg(user, i);
 	}
 
-	public void sendMsg(String user, int index, Map<String, User> users) throws InterruptedException{//ajoute un message à un utilisateur
-		//if(!messages.isEmpty())
-			//users.get(user).aEnvoyer.offer(messages.get(0));
+	public void sendMsg(String user, int index) throws InterruptedException{//ajoute un message à un utilisateur
+		if(Server.usersOnline.containsKey(user))
+			try {
+				Server.usersOnline.get(user).receive(this.messages.get(index));
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 	
 	//ce n'est plus un salon pour ses participants
-	public void remove(Map<String, User> users){
+	public void remove(){
 		for(Iterator it = participants.iterator(); it.hasNext();)
-			users.get(it.next()).roomsUsed.remove(name);
+			Server.users.get(it.next()).roomsUsed.remove(name);
 	}
 
 	

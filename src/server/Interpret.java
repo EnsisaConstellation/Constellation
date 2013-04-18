@@ -12,7 +12,7 @@ import Commandes.DelContact;
 import Commandes.CreateRoom;
 import Commandes.Command;
 import Commandes.DelRoom;
-
+import Commandes.Receive;
 
 public class Interpret {
 	//la liste des commandes a executer
@@ -35,7 +35,7 @@ public class Interpret {
 			Thread.sleep(1);
 	}
 	
-	public void execute(Map<String, User> users, Map<String, Room> rooms) throws RemoteException{
+	public void execute(Map<String, User> users, Map<String, Room> rooms) throws RemoteException, InterruptedException{
 		
 		
 		//on test l'identite de la personne ayant lance la commande
@@ -50,7 +50,7 @@ public class Interpret {
 				}
 			
 		else if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).token.equals(cmdAct.token)){
-			
+			System.out.println("on execute une commande");
 			//on l'execute
 			if(cmdAct.name.equals("AddContact"))
 				users.get(cmdAct.user).addContact(((AddContact)cmdAct).contact, users);
@@ -62,16 +62,30 @@ public class Interpret {
 				rooms.put(((CreateRoom)cmdAct).name, new Room(((CreateRoom)cmdAct).name, ((CreateRoom)cmdAct).password, ((CreateRoom)cmdAct).user));
 			
 			else if(cmdAct.name.equals("DelRoom")){
-				if(rooms.containsKey(((DelRoom)cmdAct).room)){
-					if(rooms.get(((DelRoom)cmdAct).room).getOwner().equals(((DelRoom)cmdAct).user)){
-						rooms.get(((DelRoom)cmdAct).room).remove(users);
-						rooms.remove(((DelRoom)cmdAct).room);
-						System.out.println("le salon " + ((DelRoom)cmdAct).room + " a ete supprime");}
+				DelRoom cmd = ((DelRoom)cmdAct);
+				if(rooms.containsKey(cmd.room)){
+					if(rooms.get(cmd.room).getOwner().equals(cmd.user)){
+						rooms.get(cmd.room).remove();
+						rooms.remove(cmd.room);
+						System.out.println("le salon " + cmd.room + " a ete supprime");}
 						else
-							System.out.println("le salon " + ((DelRoom)cmdAct).room + " ne peut etre supprime : vous n'en etes pas le createur");
+							System.out.println("le salon " + cmd.room + " ne peut etre supprime : vous n'en etes pas le createur");
 					}
 				else
-					System.out.println("le salon " + ((DelRoom)cmdAct).room + " ne peut etre supprime : il n'existe pas");
+					System.out.println("le salon " + cmd.room + " ne peut etre supprime : il n'existe pas");
+			}
+			
+			else if(cmdAct.name.equals("Receive")){
+				Receive cmd = ((Receive)cmdAct);
+				if(rooms.containsKey(cmd.room) && rooms.get(cmd.room).getParticipants().contains(cmd.user)){
+					rooms.get(cmd.room).receive(new Message(cmd.message, cmd.room, cmd.user));
+				}
+				else
+					System.out.println("le saloon ne semble pas exister, ou vous n'en faites pas parti.");
+			}
+			
+			else if(cmdAct.name.equals("GetContact")){
+				Server.usersOnline.get(cmdAct.user).receive(new Message(users.get(cmdAct.user).contacts.toString(), "Contacts"));
 			}
 			//TODO completer les fonctions manquantes
 		}
@@ -97,56 +111,7 @@ public class Interpret {
 							else
 								System.out.println(new Exception("commande joinSaloon incorrecte"));
 							break;
-							
-				case "setName": //nom du saloon, pwd du saloon, nouveau nom du saloon
-					if(tabCmd.length==6)									//la longueur de la cmd est bonne ?
-						if(saloons.containsKey(tabCmd[3]) 					//le saloons existe bien ?
-						&& !saloons.containsKey(tabCmd[5]) 					//le nom n'est pas pris ?
-						&& saloons.get(tabCmd[2]).owner.equals(tabCmd[0]))	//si l'utilisateur possède bien le saloon
-						{	
-							saloons.get(tabCmd[2]).setName(tabCmd[5]);		//Changement du nom du sallon
-							saloons.put(tabCmd[5], saloons.get(tabCmd[2])); //Création d'une copie
-							saloons.remove(tabCmd[2]);						//Supression de l'ancien saloon
-							for (int i = 0 ; i< saloons.get(tabCmd[5]).participants.size() ; i++)
-							{
-								users.get(saloons.get(tabCmd[5]).participants.get(i)).saloonsUsed.remove(tabCmd[3]);	//supprime l'ancienne clé
-								users.get(saloons.get(tabCmd[5]).participants.get(i)).saloonsUsed.add(tabCmd[5]);	//ajout du nouveau nom du saloon
-							}
-						}
-						else
-							System.out.println(new Exception("commande setName pour le saloon est incorecte"));
-						break;
 						
-				case "setPassword":	//nom du saloon, pwd du saloon, nouveau pwd
-					if(tabCmd.length==6)
-						if(saloons.containsKey(tabCmd[3]) 	//saloon existe ?
-								&& saloons.get(tabCmd[2]).owner.equals(tabCmd[0])) //owner ?
-							//TODO vérification du mdp avant la modification
-						{
-							saloons.get(tabCmd[2]).setPassword(tabCmd[5]);	//changelent du mdp
-						}
-						else
-							System.out.println(new Exception("Commande setPassword incorecte"));
-							
-					break;
-						
-				case "receive":	// nom du saloon, msg
-					if(tabCmd.length >=5 ) {
-						if(saloons.containsKey(tabCmd[3])			 //saloon existe ?
-								&& saloons.get(tabCmd[3]).participants.contains(tabCmd[0]))	//user appartient aux participants
-						{
-							msgResult = new StringBuffer() ;								//init du msg
-							for(int i = 4 ; i < tabCmd.length ; i++)
-							{
-								msgResult.append(tabCmd[i]);
-							}
-							saloons.get(tabCmd[3]).receive(new Message(msgResult.toString(), tabCmd[3]), users);
-						}
-						else
-							System.out.println("le saloon ne semble pas exister, ou vous n'en faites pas parti."+tabCmd[3]+saloons.containsKey(tabCmd[3]));}
-						else
-							System.out.println(new Exception("commande receive incorecte"));
-					break ;
 				//TODO changement de mdp user
 		}
 	

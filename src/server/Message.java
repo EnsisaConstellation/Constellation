@@ -5,19 +5,28 @@ import java.text.DateFormat;
 
 public class Message implements Serializable{
 
-	private String content;
-	private String saloon;
+	public String content;
+	public String room;
+	public String user;
 	DateFormat date;
 	
 	
 	public Message(String msg){
 		content = msg;
 		date = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
-		saloon = "";
+		room = "";
+		user = "";
 	}
-	public Message(String msg, String saloon){
+	public Message(String msg, String room){
 		this(msg);
-		this.saloon = saloon;
+		this.room = room;
+		user = "";
+	}
+	
+	public Message(String msg, String room, String user){
+		this(msg);
+		this.room = room;
+		this.user = user;
 	}
 	
 	public void modify(String msg){
@@ -36,11 +45,11 @@ public class Message implements Serializable{
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getSaloon() {
-		return saloon;
+	public String getRoom() {
+		return room;
 	}
-	public void setSaloon(String saloon) {
-		this.saloon = saloon;
+	public void setRoom(String room) {
+		this.room = room;
 	}
 	public DateFormat getDate() {
 		return date;
