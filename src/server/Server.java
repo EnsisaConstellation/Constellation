@@ -1,25 +1,18 @@
 package server;
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.BlockingQueue;
 
 import Commandes.AddContact;
 import Commandes.Command;
 import Commandes.CreateRoom;
-import Commandes.DelContact;
-import Commandes.DelRoom;
-
 import client.ClientI;
 
 import com.hazelcast.core.Hazelcast;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 
 public class Server extends UnicastRemoteObject implements ServerI {
 	
@@ -62,16 +55,20 @@ public class Server extends UnicastRemoteObject implements ServerI {
 		users.get("root").generateToken();
 		commands.add(new CreateRoom("root", users.get("root").token, "Connexion", "root"));//Réserve le salon Connexion
 		commands.add(new CreateRoom("root", users.get("root").token, "Contacts", "root"));
+		commands.add(new CreateRoom("root", users.get("root").token, "Rooms", "root"));
 		
 		//creation d'utilisateurs pour pouvoir tester le fonctionnement du serveur
 		newUser(new User("user1", "password1"));
 		users.get("user1").token = "token1";
 		newUser(new User("user2", "password2"));
+		commands.add(new CreateRoom("user1", "token1", "room1", "passwordRoom1"));
 		commands.add(new AddContact("user1", "token1", "user2"));
 		newUser(new User("user3", "password3"));
 		commands.add(new AddContact("user1", "token1", "user3"));
-		commands.add(new CreateRoom("user1", "token1", "room1", "passwordRoom1"));
-		users.get("user1").getaEnvoyer().add("test");
+		while(!commands.isEmpty()){
+			interpret.fetch(users, rooms);
+		}
+		rooms.get("room1").participants.add("user2");
 				
 		//boucle de fonctionnement
 		while(true){

@@ -1,18 +1,9 @@
 package server;
 import java.rmi.RemoteException;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 
-import client.ClientI;
-
-import Commandes.AddContact;
-import Commandes.Connexion;
-import Commandes.DelContact;
-import Commandes.CreateRoom;
-import Commandes.Command;
-import Commandes.DelRoom;
-import Commandes.Receive;
+import Commandes.*;
 
 public class Interpret {
 	//la liste des commandes a executer
@@ -50,7 +41,7 @@ public class Interpret {
 				}
 			
 		else if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).token.equals(cmdAct.token)){
-			System.out.println("on execute une commande");
+			System.out.println("on execute une commande : "+cmdAct.name);
 			//on l'execute
 			if(cmdAct.name.equals("AddContact"))
 				users.get(cmdAct.user).addContact(((AddContact)cmdAct).contact, users);
@@ -58,34 +49,40 @@ public class Interpret {
 			else if(cmdAct.name.equals("DelContact"))
 				users.get(cmdAct.user).delContact(((DelContact)cmdAct).contact);
 			
-			else if(cmdAct.name.equals("CreateRoom"))
-				rooms.put(((CreateRoom)cmdAct).name, new Room(((CreateRoom)cmdAct).name, ((CreateRoom)cmdAct).password, ((CreateRoom)cmdAct).user));
-			
-			else if(cmdAct.name.equals("DelRoom")){
-				DelRoom cmd = ((DelRoom)cmdAct);
+			else if(cmdAct.name.equals("CreateRoom")){
+				if(!rooms.containsKey(((CreateRoom)cmdAct).room))
+					rooms.put(((CreateRoom)cmdAct).room, new Room(((CreateRoom)cmdAct).room, ((CreateRoom)cmdAct).password, cmdAct.user));
+				else if(Server.rooms.get(((CreateRoom)cmdAct).room).getPassword().equals(((CreateRoom)cmdAct).password)){
+					Server.rooms.get(((CreateRoom)cmdAct).room).participants.add(((CreateRoom)cmdAct).user);
+					Server.users.get(((CreateRoom)cmdAct).user).roomsUsed.add(((CreateRoom)cmdAct).room);
+				}
+			}
+			else if(cmdAct.name.equals("QuitRoom")){
+				QuitRoom cmd = ((QuitRoom)cmdAct);
 				if(rooms.containsKey(cmd.room)){
-					if(rooms.get(cmd.room).getOwner().equals(cmd.user)){
-						rooms.get(cmd.room).remove();
+					users.get(cmd.user).roomsUsed.remove(cmd.room);
+					rooms.get(cmd.room).participants.remove(cmd.user);
+					if(rooms.get(cmd.room).participants.isEmpty())
 						rooms.remove(cmd.room);
-						System.out.println("le salon " + cmd.room + " a ete supprime");}
-						else
-							System.out.println("le salon " + cmd.room + " ne peut etre supprime : vous n'en etes pas le createur");
+					else if(rooms.get(cmd.room).getOwner().equals(cmd.user))
+						rooms.get(cmd.room).setOwner(rooms.get(cmd.room).participants.get(0));
 					}
 				else
-					System.out.println("le salon " + cmd.room + " ne peut etre supprime : il n'existe pas");
+					System.out.println("le salon " + cmd.room + " ne peut etre quitte : il n'existe pas");
 			}
 			
 			else if(cmdAct.name.equals("Receive")){
 				Receive cmd = ((Receive)cmdAct);
-				if(rooms.containsKey(cmd.room) && rooms.get(cmd.room).getParticipants().contains(cmd.user)){
+				if(rooms.containsKey(cmd.room) && rooms.get(cmd.room).participants.contains(cmd.user)){
 					rooms.get(cmd.room).receive(new Message(cmd.message, cmd.room, cmd.user));
 				}
 				else
-					System.out.println("le saloon ne semble pas exister, ou vous n'en faites pas parti.");
+					System.out.println("le saloon ne semble pas exister, ou vous n'en faites pas parti. "+cmd.room);
 			}
 			
 			else if(cmdAct.name.equals("GetContact")){
 				Server.usersOnline.get(cmdAct.user).receive(new Message(users.get(cmdAct.user).contacts.toString(), "Contacts"));
+				Server.usersOnline.get(cmdAct.user).receive(new Message(users.get(cmdAct.user).roomsUsed.toString(), "Rooms"));
 			}
 			//TODO completer les fonctions manquantes
 		}

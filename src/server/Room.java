@@ -16,8 +16,8 @@ public class Room implements Serializable {
 	private DateFormat bornDate;
 	
 	//liste les participants et les messages de la discussion
-	private List<String> participants = new ArrayList<String>();
-	private List<Message> messages = new ArrayList<Message>();
+	public List<String> participants = new ArrayList<String>();
+	public List<Message> messages = new ArrayList<Message>();
 	
 	//nom du createur, c'est lui qui l'administre
 	private String owner;
@@ -29,6 +29,7 @@ public class Room implements Serializable {
 		this.password = "";
 		this.bornDate = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
 		participants.add(user);
+		Server.users.get(user).roomsUsed.add(name);
 		System.out.println("création du salon " + name + " par l'utilisateur " + user);
 	}
 	public Room(String name, String password, String user){
@@ -42,8 +43,10 @@ public class Room implements Serializable {
 		//il le met dans la liste des messages et l'envoie à chaque utilisateur inscrit (via send)
 		messages.add(message);
 		System.out.println(message.getContent());
-		for(int i=0; i<participants.size(); i++)
+		for(int i=0; i<participants.size(); i++){
 			sendMsg(participants.get(i), messages.size()-1);
+			System.out.println("message envoyé a : "+participants.get(i));
+		}
 	}
 	
 	public void send(String user, int nb) throws InterruptedException{
@@ -80,12 +83,6 @@ public class Room implements Serializable {
 	}
 	public void setBornDate(DateFormat bornDate) {
 		this.bornDate = bornDate;
-	}
-	public List<String> getParticipants() {
-		return participants;
-	}
-	public void setParticipants(List<String> participants) {
-		this.participants = participants;
 	}
 	public List<Message> getMessages() {
 		return messages;
