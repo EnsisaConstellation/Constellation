@@ -5,10 +5,11 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import commands.*;
+
 import server.Message;
 import server.ServerI;
 import swing.Login;
-import Commandes.*;
 
 public class Client extends UnicastRemoteObject implements ClientI{
 	static Registry registry;
@@ -32,7 +33,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 		//connexion();
 	}
 	
-	//TODO implémenter les fonctions correspondant aux diverses commandes possibles
+	//TODO implï¿½menter les fonctions correspondant aux diverses commandes possibles
 	
 	public void connexion() throws RemoteException, InterruptedException{
 		registry = LocateRegistry.getRegistry(ip,port);
@@ -68,7 +69,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 	}
 	
 	@Override
-	public void receive(Message msg) throws RemoteException { //cette fonction est appelée a distance par le serveur
+	public void receive(Message msg) throws RemoteException { //cette fonction est appelï¿½e a distance par le serveur
 		
 		if(msg.getRoom().equals("Connexion")){		//le message contient le token
 			token = msg.getContent();
@@ -100,7 +101,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 		    }
 	}
 	
-	//création de salon
+	//crï¿½ation de salon
 	public void createRoom(String roomName, String pass){
 		try {
 		      ((ServerI)registry.lookup("server")).addCommand(new CreateRoom(name,token,roomName,pass));
@@ -155,12 +156,12 @@ public class Client extends UnicastRemoteObject implements ClientI{
 	@Override
 	public String toString(){
 		StringBuilder tmp=new StringBuilder();
-		tmp.append("Client : "+name+"\nPassword : "+password+"\nConnecté au serveur : "+ip+":"+port);
+		tmp.append("Client : "+name+"\nPassword : "+password+"\nConnectï¿½ au serveur : "+ip+":"+port);
 		return tmp.toString();
 	}
 	
 	/*
-		//main (non utilisé ?)
+		//main (non utilisï¿½ ?)
 	public static void main(String[] args) throws RemoteException, InterruptedException {
 		//mise en place de RMI
 		registry = LocateRegistry.getRegistry(ip, (int)port);

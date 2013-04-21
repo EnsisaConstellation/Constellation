@@ -3,7 +3,8 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import Commandes.*;
+import commands.*;
+
 
 public class Interpret {
 	//la liste des commandes a executer
@@ -34,7 +35,7 @@ public class Interpret {
 			if(!users.containsKey(cmdAct.user))//si c'est un nouvel utilisateur, on lui cree un compte
 				Server.newUser(new User(cmdAct.user, cmdAct.token));
 			if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).password.equals(cmdAct.token)){
-				Server.usersOnline.put(cmdAct.user, ((Connexion)cmdAct).client);						//l'utilisateur est enregistré
+				Server.usersOnline.put(cmdAct.user, ((Connexion)cmdAct).client);						//l'utilisateur est enregistrï¿½
 				users.get(cmdAct.user).generateToken();											//on lui genere un token
 				((Connexion)cmdAct).client.receive(new Message(users.get(cmdAct.user).token, "Connexion"));	//on lui envoie le token
 				System.out.println(cmdAct.user+ " s'est connecte au serveur");

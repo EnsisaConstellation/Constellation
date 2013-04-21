@@ -7,29 +7,30 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 
-import Commandes.AddContact;
-import Commandes.Command;
-import Commandes.CreateRoom;
 import client.ClientI;
 
 import com.hazelcast.core.Hazelcast;
+import commands.AddContact;
+import commands.Command;
+import commands.CreateRoom;
+import commands.RenameRoom;
 
 public class Server extends UnicastRemoteObject implements ServerI {
 	
 
-	//map des users et des rooms, les noms etant uniques servent de cle
+	/* map des users et des rooms, les noms etant uniques servent de cle */
 	static Map<String, Room> rooms = Hazelcast.getMap("rooms");
 	static Map<String, User> users = Hazelcast.getMap("users");
 	
-	//liste des commandes que le serveur doit encore executer
+	/* liste des commandes que le serveur doit encore executer */
 	static BlockingQueue<Command> commands = Hazelcast.getQueue("commands");
 
-	//map des utilisateurs actuellement en ligne
+	/* map des utilisateurs actuellement en ligne */
 	static Map<String, ClientI> usersOnline = new TreeMap<String, ClientI>();
 	
 	static Interpret interpret = new Interpret(commands);
 
-	//constructeur de base
+	/* constructeur de base */
 	protected Server() throws RemoteException {
 		super();
 	}
@@ -39,8 +40,8 @@ public class Server extends UnicastRemoteObject implements ServerI {
 		//mise en place de RMI
 		Registry RMI_REGISTRY = LocateRegistry.createRegistry(1099);
 		Server server = new Server();
-		//System.setSecurityManager(new SecurityManagerPermissif());
-		/*try {
+		/*System.setSecurityManager(new SecurityManagerPermissif());
+		try {
 		    if (System.getSecurityManager() == null) {
 		      System.setSecurityManager(new RMISecurityManager());
 		    }
@@ -50,14 +51,14 @@ public class Server extends UnicastRemoteObject implements ServerI {
 		
 		RMI_REGISTRY.rebind("server", server);
 		
-		//on cree l'utilisateur principal, on le connecte et cree les rooms utilent au serveur
+		/* on cree l'utilisateur principal, on le connecte et cree les rooms utilent au serveur */
 		newUser(new User("root", "root"));
 		users.get("root").generateToken();
-		commands.add(new CreateRoom("root", users.get("root").token, "Connexion", "root"));//Réserve le salon Connexion
+		commands.add(new CreateRoom("root", users.get("root").token, "Connexion", "root"));//RÃ©serve le salon Connexion
 		commands.add(new CreateRoom("root", users.get("root").token, "Contacts", "root"));
 		commands.add(new CreateRoom("root", users.get("root").token, "Rooms", "root"));
 		
-		//creation d'utilisateurs pour pouvoir tester le fonctionnement du serveur
+		/* creation d'utilisateurs pour pouvoir tester le fonctionnement du serveur */
 		newUser(new User("user1", "password1"));
 		users.get("user1").token = "token1";
 		newUser(new User("user2", "password2"));
@@ -65,6 +66,9 @@ public class Server extends UnicastRemoteObject implements ServerI {
 		commands.add(new AddContact("user1", "token1", "user2"));
 		newUser(new User("user3", "password3"));
 		commands.add(new AddContact("user1", "token1", "user3"));
+		//TODO test de RenameRoom & ChangeRoomPass
+		commands.add(new RenameRoom("user1", "token1", "room1", "newnameroom1", "passwodRoom1"));
+		
 		while(!commands.isEmpty()){
 			interpret.fetch(users, rooms);
 		}
