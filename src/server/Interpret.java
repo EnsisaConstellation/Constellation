@@ -35,7 +35,7 @@ public class Interpret {
 			if(!users.containsKey(cmdAct.user))//si c'est un nouvel utilisateur, on lui cree un compte
 				Server.newUser(new User(cmdAct.user, cmdAct.token));
 			if(users.containsKey(cmdAct.user) && users.get(cmdAct.user).password.equals(cmdAct.token)){
-				Server.usersOnline.put(cmdAct.user, ((Connexion)cmdAct).client);						//l'utilisateur est enregistr�
+				Server.usersOnline.put(cmdAct.user, ((Connexion)cmdAct).client);						//l'utilisateur est enregistre
 				users.get(cmdAct.user).generateToken();											//on lui genere un token
 				((Connexion)cmdAct).client.receive(new Message(users.get(cmdAct.user).token, "Connexion"));	//on lui envoie le token
 				System.out.println(cmdAct.user+ " s'est connecte au serveur");
@@ -58,6 +58,40 @@ public class Interpret {
 					Server.users.get(((CreateRoom)cmdAct).user).roomsUsed.add(((CreateRoom)cmdAct).room);
 				}
 			}
+			else if(cmdAct.name.equals("RenameRoom")){
+				RenameRoom cmd = ((RenameRoom)cmdAct);
+				if(rooms.containsKey(cmd.room)){
+					if(rooms.get(cmd.room).getOwner().equals(cmd.user)){
+						if(rooms.get(cmd.room).getPassword().equals(cmd.password)){
+							rooms.get(cmd.room).setName(cmd.newName);
+							System.out.println("le nom du salon "+cmd.room+" a ete change en "+cmd.newName);	
+						}
+						else
+							System.out.println("le nom du salon "+cmd.room+" ne peut etre change : mot de passe faux");	
+					}
+					else
+						System.out.println("le nom du salon "+cmd.room+" ne peut etre change : droits administrateurs requis");							
+				}
+				else
+					System.out.println("le nom du salon "+cmd.room+" ne peut etre change : le salon n'existe pas");
+			}
+			else if(cmdAct.name.equals("ChangeRoomPass")){
+				ChangeRoomPass cmd = ((ChangeRoomPass)cmdAct);
+				if(rooms.containsKey(cmd.room)){
+					if(rooms.get(cmd.room).getOwner().equals(cmd.user)){
+						if(rooms.get(cmd.room).getPassword().equals(cmd.password)){
+							rooms.get(cmd.room).setPassword(cmd.newPassword);
+							System.out.println("le mot de passe du salon "+cmd.room+" a ete change");
+						}
+						else
+							System.out.println("le mot de passe du salon "+cmd.room+" ne peut etre change : mot de passe faux");	
+					}
+					else
+						System.out.println("le mot de passe du salon "+cmd.room+" ne peut etre change : droits administrateurs requis");							
+				}
+				else
+					System.out.println("le mot de passe du salon "+cmd.room+" ne peut etre change : le salon n'existe pas");
+			}
 			else if(cmdAct.name.equals("QuitRoom")){
 				QuitRoom cmd = ((QuitRoom)cmdAct);
 				if(rooms.containsKey(cmd.room)){
@@ -71,14 +105,30 @@ public class Interpret {
 				else
 					System.out.println("le salon " + cmd.room + " ne peut etre quitte : il n'existe pas");
 			}
-			
+			else if(cmdAct.name.equals("DelRoom")){
+				DelRoom cmd = ((DelRoom)cmdAct);
+				if(rooms.containsKey(cmd.room)){
+					if(rooms.get(cmd.room).getOwner().equals(cmd.user)){
+						if(rooms.get(cmd.room).getPassword().equals(cmd.password)){
+							rooms.remove(cmd.room);
+							System.out.println("le salon "+cmd.room+" a bien ete supprime");
+						}
+						else
+							System.out.println("le salon "+cmd.room+" ne peut etre supprime : mot de passe faux");	
+					}
+					else
+						System.out.println("le salon "+cmd.room+" ne peut etre supprime : droits administrateurs requis");	
+					}
+				else
+					System.out.println("le salon " + cmd.room + " ne peut etre supprime : il n'existe pas");
+			}
 			else if(cmdAct.name.equals("Receive")){
 				Receive cmd = ((Receive)cmdAct);
 				if(rooms.containsKey(cmd.room) && rooms.get(cmd.room).participants.contains(cmd.user)){
 					rooms.get(cmd.room).receive(new Message(cmd.message, cmd.room, cmd.user));
 				}
 				else
-					System.out.println("le saloon ne semble pas exister, ou vous n'en faites pas parti. "+cmd.room);
+					System.out.println("le salon ne semble pas exister, ou vous n'en faites pas parti. "+cmd.room);
 			}
 			
 			else if(cmdAct.name.equals("GetContact")){

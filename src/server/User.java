@@ -16,14 +16,14 @@ public class User implements Serializable {
 	//le token vas remplacer le mot de passe une fois la connexion etablie
 	String name, password, token;
 	
-	//date de la derni�re connexion, permet de charger les nouveaux messages
+	//date de la derniere connexion, permet de charger les nouveaux messages
 	DateFormat lastConnection = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT);
 	
 	//liste des contacts de l'utilisateur et des rooms qu'il utilise
 	List<String> contacts = new ArrayList<String>();
 	List<String> roomsUsed = new ArrayList<String>();
 	
-	//la queue aEnvoyer contient tous les messages que l'on veut transmettre � l'utilisateur
+	//la queue aEnvoyer contient tous les messages que l'on veut transmettre a l'utilisateur
 	private transient BlockingQueue<String> aEnvoyer;
 	
 	public User(String name, String password){
@@ -62,7 +62,7 @@ public class User implements Serializable {
 
 	public void generateToken() {
 		token = ""+10000*Math.random();
-		//TODO am�liorer ce systeme
+		//TODO ameliorer ce systeme
 		
 	}
 }

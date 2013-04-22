@@ -33,7 +33,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 		//connexion();
 	}
 	
-	//TODO impl�menter les fonctions correspondant aux diverses commandes possibles
+	//TODO implementer les fonctions correspondant aux diverses commandes possibles
 	
 	public void connexion() throws RemoteException, InterruptedException{
 		registry = LocateRegistry.getRegistry(ip,port);
@@ -44,7 +44,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 		      e.printStackTrace();
 		    }
 		
-		/*while(true){//dans cette version le client ne fais qu'afficher les messages recus
+		/*while(true){//dans cette version le client ne fait qu'afficher les messages recus
 			Thread.sleep(10);
 		}*/
 	}
@@ -69,7 +69,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 	}
 	
 	@Override
-	public void receive(Message msg) throws RemoteException { //cette fonction est appel�e a distance par le serveur
+	public void receive(Message msg) throws RemoteException { //cette fonction est appelee a distance par le serveur
 		
 		if(msg.getRoom().equals("Connexion")){		//le message contient le token
 			token = msg.getContent();
@@ -85,7 +85,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 	public void addContact(String contact){
 		try {
 		      ((ServerI)registry.lookup("server")).addCommand(new AddContact(name,token,contact));
-		      System.out.println("Contact added");//pour le test
+		      System.out.println("Contact added (from Client)");//pour le test
 		    } catch(Exception e) {
 		      e.printStackTrace();
 		    }
@@ -95,37 +95,58 @@ public class Client extends UnicastRemoteObject implements ClientI{
 	public void delContact(String contact){
 		try {
 		      ((ServerI)registry.lookup("server")).addCommand(new DelContact(name,token,contact));
-		      System.out.println("Contact deleted");//pour le test
+		      System.out.println("Contact deleted (from Client)");//pour le test
 		    } catch(Exception e) {
 		      e.printStackTrace();
 		    }
 	}
 	
-	//cr�ation de salon
+	//creation de salon
 	public void createRoom(String roomName, String pass){
 		try {
 		      ((ServerI)registry.lookup("server")).addCommand(new CreateRoom(name,token,roomName,pass));
-		      System.out.println("Room created");//pour le test
+		      System.out.println("Room created (from Client)");//pour le test
 		    } catch(Exception e) {
 		      e.printStackTrace();
 		    }
 	}
 	
+	//renommer un salon
+	public void renameRoom(String roomName, String newRoomName, String pass){
+		try {
+		      ((ServerI)registry.lookup("server")).addCommand(new RenameRoom(name,token,roomName,newRoomName,pass));
+		      System.out.println("Room renamed (from Client)");//pour le test
+		    } catch(Exception e) {
+		      e.printStackTrace();
+		    }
+	}
+	
+	//modifier le mot de passe d'un salon
+	public void changeRoomPass(String roomName, String pass, String newPass){
+		try {
+		      ((ServerI)registry.lookup("server")).addCommand(new ChangeRoomPass(name,token,roomName,pass,newPass));
+		      System.out.println("Pass changed (from Client)");//pour le test
+		    } catch(Exception e) {
+		      e.printStackTrace();
+		    }
+	}
+
+
 	//quitter un salon
 	public void quitRoom(String roomName){
 		try {
 		      ((ServerI)registry.lookup("server")).addCommand(new QuitRoom(name,token,roomName));
-		      System.out.println("Room quitted");//pour le test
+		      System.out.println("Room quitted (from Client)");//pour le test
 		    } catch(Exception e) {
 		      e.printStackTrace();
 		    }
 	}
 	
 	//supprimer un salon
-	public void delRoom(String roomName){
+	public void delRoom(String roomName, String password){
 		try {
-		      ((ServerI)registry.lookup("server")).addCommand(new DelRoom(name,token,roomName));
-		      System.out.println("Room deleted");//pour le test
+		      ((ServerI)registry.lookup("server")).addCommand(new DelRoom(name,token,roomName,password));
+		      System.out.println("Room deleted (from Client)");//pour le test
 		    } catch(Exception e) {
 		      e.printStackTrace();
 		    }
@@ -140,6 +161,9 @@ public class Client extends UnicastRemoteObject implements ClientI{
 		return password;
 	}
 	
+	public String getToken(){
+		return token;
+	}
 	/*
 	public String getRooms(){
 		
@@ -156,12 +180,12 @@ public class Client extends UnicastRemoteObject implements ClientI{
 	@Override
 	public String toString(){
 		StringBuilder tmp=new StringBuilder();
-		tmp.append("Client : "+name+"\nPassword : "+password+"\nConnect� au serveur : "+ip+":"+port);
+		tmp.append("Client : "+name+"\nPassword : "+password+"\nConnecte au serveur : "+ip+":"+port);
 		return tmp.toString();
 	}
 	
 	/*
-		//main (non utilis� ?)
+		//main (non utilise)
 	public static void main(String[] args) throws RemoteException, InterruptedException {
 		//mise en place de RMI
 		registry = LocateRegistry.getRegistry(ip, (int)port);
@@ -174,7 +198,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 		      e.printStackTrace();
 		    }
 		
-		while(true){//dans cette version le client ne fais qu'afficher les messages recus
+		while(true){//dans cette version le client ne fait qu'afficher les messages recus
 			Thread.sleep(10);
 		}
 	}

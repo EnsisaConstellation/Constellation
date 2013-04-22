@@ -8,6 +8,4 @@ public class CreateRoom extends Command{
 		this.room = room;
 		this.password = password;
 	}
-	
-	
 }

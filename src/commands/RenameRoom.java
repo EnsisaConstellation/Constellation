@@ -4,12 +4,13 @@ package commands;
  *  Name of the room owner, its token, room name, new room name, room pass  
  *  */
 public class RenameRoom extends Command{
-	public String room, newName;
+	public String room, newName, password;
 	
 	// Room Owner
 	public RenameRoom(String user, String token, String room, String newName, String password){
 		super(user, token, "RenameRoom");
 		this.room = newName;
+		this.password=password;
 	}
 
 }

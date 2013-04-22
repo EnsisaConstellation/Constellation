@@ -51,10 +51,10 @@ public class Server extends UnicastRemoteObject implements ServerI {
 		
 		RMI_REGISTRY.rebind("server", server);
 		
-		/* on cree l'utilisateur principal, on le connecte et cree les rooms utilent au serveur */
+		/* on cree l'utilisateur principal, on le connecte et cree les rooms utiles au serveur */
 		newUser(new User("root", "root"));
 		users.get("root").generateToken();
-		commands.add(new CreateRoom("root", users.get("root").token, "Connexion", "root"));//Réserve le salon Connexion
+		commands.add(new CreateRoom("root", users.get("root").token, "Connexion", "root"));//Reserve le salon Connexion
 		commands.add(new CreateRoom("root", users.get("root").token, "Contacts", "root"));
 		commands.add(new CreateRoom("root", users.get("root").token, "Rooms", "root"));
 		
