@@ -51,17 +51,26 @@ public class Client extends UnicastRemoteObject implements ClientI{
 	
 	
 	public void deconnexion(){
-		isConnected=false;
-		//on vide les variables
-		this.registry=null;
-		this.token=null;
-		this.name=null;
-		this.password=null;
-		this.ip=null;
-		this.port=(Integer) null;
-		this.client=null;
-		//appel du Garbage Collector
-		System.gc(); 
+		try {
+		      ((ServerI)registry.lookup("server")).addCommand(new Deconnexion(name,token,client));
+		      isConnected=false;
+		      
+		      //on vide les variables
+		      this.registry=null;
+		      this.token=null;
+		      this.name=null;
+		      this.password=null;
+		      this.ip=null;
+		      this.port=(Integer) null;
+		      this.client=null;
+		      
+		      //appel du Garbage Collector
+		      System.gc(); 
+		      
+		      System.out.println("Server quitted (from Client)");//pour le test
+		    } catch(Exception e) {
+		      e.printStackTrace();
+		    }
 	}
 	
 	public boolean getStatusConnexion(){

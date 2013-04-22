@@ -135,6 +135,10 @@ public class Interpret {
 				Server.usersOnline.get(cmdAct.user).receive(new Message(users.get(cmdAct.user).contacts.toString(), "Contacts"));
 				Server.usersOnline.get(cmdAct.user).receive(new Message(users.get(cmdAct.user).roomsUsed.toString(), "Rooms"));
 			}
+			else if(cmdAct.name.equals("Deconnexion")){
+				Deconnexion cmd = ((Deconnexion)cmdAct);
+				Server.usersOnline.remove(cmd.client);
+			}
 			//TODO completer les fonctions manquantes
 		}
 		else
