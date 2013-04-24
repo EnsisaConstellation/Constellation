@@ -25,7 +25,6 @@ public class Client extends UnicastRemoteObject implements ClientI{
 		super();
 	}
 	public Client(String ip, int port, String login, String pass) throws RemoteException{
-		super();
 		this.ip=ip;
 		this.port=port;
 		this.name=login;
@@ -37,6 +36,7 @@ public class Client extends UnicastRemoteObject implements ClientI{
 	
 	public void connexion() throws RemoteException, InterruptedException{
 		registry = LocateRegistry.getRegistry(ip,port);
+		client=new Client();
 		try {
 		      ((ServerI)registry.lookup("server")).addCommand(new Connexion(name, password, client));
 		      isConnected=true;
